@@ -1,10 +1,9 @@
-// import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:practice1/firgot_password.dart';
 import 'package:practice1/signin.dart';
 import 'package:practice1/signup.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:http/http.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,16 +25,22 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
-  // void validate() {
-  //   if (formkey.currentState!.validate()) {
-  //     print("validated");
-  //   } else {
-  //     print("Not Validated");
-  //   }
-  // }
+  get http => null;
+
+  Future<void> getdata() async {
+    var res = await http.get("https://api.github.com/users/desi-programmer");
+    print(res);
+  }
+
+  bool _isHidden = true;
 
   String? validatepass(value) {
     if (value!.isEmpty) {
@@ -96,16 +101,21 @@ class LoginPage extends StatelessWidget {
             padding: EdgeInsets.all(20),
             child: TextFormField(
               autovalidate: false,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'PASSWORD',
                 hintStyle: TextStyle(fontSize: 10),
                 hintText: 'Enter Password',
                 border: OutlineInputBorder(),
-                suffixIcon: Padding(
-                  padding: EdgeInsets.only(bottom: 12.0),
-                  child: Icon(Icons.remove_red_eye),
+                suffixIcon: InkWell(
+                  onTap: _togglePasswordView,
+                  child: Icon(
+                    _isHidden ? Icons.visibility : Icons.visibility_off,
+                  ),
                 ),
+                // onTap: _togglePasswordView,
               ),
+              obscureText: _isHidden,
+              // suffix: Icon(Icons.visibility),
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Password Required';
@@ -160,5 +170,11 @@ class LoginPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _togglePasswordView() {
+    setState(() {
+      _isHidden = !_isHidden;
+    });
   }
 }
