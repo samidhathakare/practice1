@@ -6,21 +6,39 @@ class NextScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('hello'),
-      ),
-      drawer: Drawer(
+          backgroundColor: Colors.blueGrey,
+          // title: Text(''),
+          leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              icon: Icon(Icons.arrow_back))
+          // title: Text(Globals.TEXT_LOGIN),
+          ),
+      endDrawer: Drawer(
         child: ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20),
               child: Text(
-                'Header',
+                'Filters',
                 //style: textTheme.headline6,
               ),
             ),
+            Divider(),
+            ListTile(
+              leading: Icon(Icons.circle),
+              title: Text('OffCamous'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.circle),
+              title: Text('OnCampus'),
+            )
           ],
         ),
       ),

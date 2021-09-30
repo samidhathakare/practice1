@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:practice1/firgot_password.dart';
+import 'package:practice1/forgot_password.dart';
+import 'package:practice1/login_Response.dart';
+import 'package:practice1/login_request.dart';
 import 'package:practice1/signin.dart';
 import 'package:practice1/signup.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,7 +23,7 @@ class MyApp extends StatelessWidget {
         splash: Image.asset('assets/images/ic_launcher.png'),
         nextScreen: LoginPage(),
         splashTransition: SplashTransition.slideTransition,
-        backgroundColor: Colors.amber.shade100,
+        backgroundColor: Colors.blueGrey.shade100,
         duration: 500,
       ),
     );
@@ -30,15 +35,24 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
+class Constants {
+  static SharedPreferences? prefs;
+}
+
 class _LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  final TextEditingController emailController = new TextEditingController();
+  final TextEditingController passwordController = new TextEditingController();
 
-  get http => null;
+  // class Constants{
+  //   static SharedPreferences? prefs;
+  // }
+  // get http => null;
 
-  Future<void> getdata() async {
-    var res = await http.get("https://api.github.com/users/desi-programmer");
-    print(res);
-  }
+  // Future<void> getdata() async {
+  //   var res = await http.get("https://api.github.com/users/desi-programmer");
+  //   print(res);
+  // }
 
   bool _isHidden = true;
 
@@ -59,9 +73,10 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         // automaticallyImplyingLeading: true,
         // leading: const IconButton(icon: Icons.arrow_back, onPressed: () {  },),
-        title: Text('PRACTISE APP'),
+        title: Text('JOB TRACK'),
         // title: Text(widget.title),
         automaticallyImplyLeading: true,
+        backgroundColor: Colors.blueGrey,
       ),
       body: Column(
         // crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,6 +87,7 @@ class _LoginPageState extends State<LoginPage> {
           Padding(
             padding: EdgeInsets.all(20),
             child: TextFormField(
+              controller: emailController,
               autovalidate: false,
               key: formkey,
               decoration: const InputDecoration(
@@ -100,6 +116,7 @@ class _LoginPageState extends State<LoginPage> {
           Padding(
             padding: EdgeInsets.all(20),
             child: TextFormField(
+              controller: passwordController,
               autovalidate: false,
               decoration: InputDecoration(
                 labelText: 'PASSWORD',
@@ -122,12 +139,16 @@ class _LoginPageState extends State<LoginPage> {
                 } else {
                   return null;
                 }
+                //else{
+                //   LoginAPI();
+                // }
               },
             ),
           ),
           new SizedBox(height: 5),
           ElevatedButton(
             onPressed: () {
+              loginAPI(context);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => NextScreen()));
             },
@@ -154,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'New to Practise App?',
+                'Dont have an account?',
               ),
               FlatButton(
                 onPressed: () {
@@ -172,9 +193,85 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // void LoginAPI(BuildContext context) async {
+  //   Future<LoginResponse> loginRes(LoginRequest requestModel) async {
+  //     LoginResponse responseModel = LoginResponse();
+  //     final String url = "https://aqglass.com/restapi/admin-login";
+
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       headers: {"Content-Type": "application/json"},
+  //     );
+  //     print(response.body);
+  //     print(response.statuscode);
+  //     if (response.statuscode) ;
+  //     responseModel = LoginResponse.fromJson(json.decode(response.body));
+  //     print(response.body);
+  //   }
+
+  //   return reponseModel;
+  //  }
+  // void loginAPI(BuildContext context) async {
+  //   Future<LoginResponse> loginRes(LoginRequest requestModel) async {
+  //     LoginResponse responseModel = LoginResponse();
+
+  //     final String url = "https://aqglass.com/restapi/admin-login";
+
+  //     LoginRequest loginRequest = LoginRequest();
+  //     loginRequest.email = emailController.text;
+  //     loginRequest.password = passwordController.text;
+
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       headers: {"Content-Type": "application/json"},
+  //       body: json.encode(requestModel.toJson()),
+  //     );
+  //     print(response.body);
+  //     print(response.statusCode);
+  //     if (response.statusCode == 200) {
+  //       print(response.statusCode);
+  //       responseModel = LoginResponse.fromJson(json.decode(response.body));
+  //       print(response.body);
+  //     }
+  //     return responseModel;
+  //   }
+
+  //   LoginRequest loginRequest = LoginRequest();
+
+  //   loginRequest.email = emailController.text;
+
+  //   loginRequest.password = passwordController.text;
+
+  //   LoginResponse? loginResponse = await loginRes(loginRequest);
+  //   var progressDialog = false;
+
+  //   if (loginResponse.status == 'success') {
+  //     ScaffoldMessenger.of(context)
+  //         .showSnackBar(SnackBar(content: Text("Login Successful")));
+  //     SharedPreferences preferences = await SharedPreferences.getInstance();
+  //     await preferences.setString("token", loginResponse.token as String);
+  //     Constants.prefs!.setBool("Loggedin", true);
+  //     Navigator.pushReplacement(
+  //         context, MaterialPageRoute(builder: (context) => NextScreen()));
+
+  //     print("Logged in");
+  //   } else {
+  //     ScaffoldMessenger.of(context)
+  //         .showSnackBar(SnackBar(content: Text("User Not Found")));
+
+  //     print(loginResponse.status);
+  //     print("not able to login");
+  //     setState(() {
+
+  //     });
+  //   }
+  // }
+
   void _togglePasswordView() {
     setState(() {
       _isHidden = !_isHidden;
     });
   }
 }
+
+void loginAPI(BuildContext context) {}
